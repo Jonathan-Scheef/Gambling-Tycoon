@@ -1,7 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -42,20 +39,25 @@ public class GamblingTycoon {
     }
 
     private static JPanel createMainMenuPanel() {
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(3, 1, 10, 10));
+        JPanel buttonPanel = new JPanel(null) {
+            @Override
+            public void doLayout() {
+                int n = getComponentCount();
+                int width = getWidth();
+                int height = getHeight();
+                int buttonHeight = height / (n * 2);
+                int buttonWidth = (int) (width * 0.7);
+                int y = height / (n + 1) - buttonHeight / 2;
+                for (int i = 0; i < n; i++) {
+                    getComponent(i).setBounds((width - buttonWidth) / 2, y, buttonWidth, buttonHeight);
+                    y += buttonHeight * 2;
+                }
+            }
+        };
 
         JButton btnRideTheBus = new JButton("Ride the Bus");
         JButton btnBlackjack = new JButton("Blackjack");
         JButton btnSlotMachine = new JButton("Slot Machine");
-
-        Font bigFont = new Font("Arial", Font.BOLD, 20);
-        btnRideTheBus.setFont(bigFont);
-        btnBlackjack.setFont(bigFont);
-        btnSlotMachine.setFont(bigFont);
-        btnRideTheBus.setPreferredSize(new Dimension(250, 50));
-        btnBlackjack.setPreferredSize(new Dimension(250, 50));
-        btnSlotMachine.setPreferredSize(new Dimension(250, 50));
 
         btnRideTheBus.addActionListener(e -> showRideTheBusPanel());
         btnBlackjack.addActionListener(e -> showBlackjackPanel());
@@ -64,7 +66,46 @@ public class GamblingTycoon {
         buttonPanel.add(btnRideTheBus);
         buttonPanel.add(btnBlackjack);
         buttonPanel.add(btnSlotMachine);
+
+        // Dynamic font resizing for all buttons
+        buttonPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                int h = buttonPanel.getHeight();
+                int w = buttonPanel.getWidth();
+                int fontSize = Math.max(14, Math.min(w, h) / 15);
+                java.awt.Font f = new java.awt.Font("Arial", java.awt.Font.BOLD, fontSize);
+                btnRideTheBus.setFont(f);
+                btnBlackjack.setFont(f);
+                btnSlotMachine.setFont(f);
+            }
+        });
         return buttonPanel;
+    }
+
+    private static JPanel createGamePanel(String gameName) {
+        JPanel panel = new JPanel(new BorderLayout());
+        // Proportional label
+        JLabel label = new JLabel(gameName + " (Game UI goes here)", JLabel.CENTER);
+        panel.add(label, BorderLayout.CENTER);
+        // Back to Menu button at the top left, proportional size
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JButton backButton = new JButton("Back to Menu");
+        backButton.addActionListener(e -> showMainMenuPanel());
+        topPanel.add(backButton, BorderLayout.WEST);
+        panel.add(topPanel, BorderLayout.NORTH);
+        // Dynamic font resizing for label and button
+        panel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                int h = panel.getHeight();
+                int w = panel.getWidth();
+                int fontSize = Math.max(14, Math.min(w, h) / 15);
+                label.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, fontSize));
+                backButton.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, Math.max(12, fontSize / 2)));
+            }
+        });
+        return panel;
     }
 
     private static void showMainMenuPanel() {
@@ -100,16 +141,6 @@ public class GamblingTycoon {
         frame.add(gamePanel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
-    }
-    private static JPanel createGamePanel(String gameName) {
-        JPanel panel = new JPanel(new BorderLayout());
-        JLabel label = new JLabel(gameName + " (Game UI goes here)", JLabel.CENTER);
-        label.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(label, BorderLayout.CENTER);
-        JButton backButton = new JButton("Back to Menu");
-        backButton.addActionListener(e -> showMainMenuPanel());
-        panel.add(backButton, BorderLayout.SOUTH);
-        return panel;
     }
 
     // Call this method to update the money counter from anywhere
