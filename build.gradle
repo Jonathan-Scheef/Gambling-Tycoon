@@ -1,1 +1,18 @@
+plugins {
+    id 'application'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Add dependencies here if needed, e.g. for testing or extra libraries
+}
+
+application {
+    // Main class for running the app
+    mainClass = 'GamblingTycoon'
+}
 
