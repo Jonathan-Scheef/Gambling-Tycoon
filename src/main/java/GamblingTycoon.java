@@ -84,11 +84,15 @@ public class GamblingTycoon {
     }
 
     private static JPanel createGamePanel(String gameName) {
-        JPanel panel = new JPanel(new BorderLayout());
-        // Proportional label
+        if (gameName.equals("Blackjack")) {
+            return Blackjack.createBlackjackPanel(() -> showMainMenuPanel());
+        }
+        if (gameName.equals("Slot Machine")) {
+            return SlotMachine.createSlotMachinePanel(() -> showMainMenuPanel());
+        }
         JLabel label = new JLabel(gameName + " (Game UI goes here)", JLabel.CENTER);
+        JPanel panel = new JPanel(new BorderLayout());
         panel.add(label, BorderLayout.CENTER);
-        // Back to Menu button at the top left, proportional size
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton backButton = new JButton("Back to Menu");
         backButton.addActionListener(e -> showMainMenuPanel());
