@@ -32,3 +32,10 @@ replay_pid*
 # Ignore lock files
 *.lock
 .gradle/buildOutputCleanup/buildOutputCleanup.lock
+build/tmp/compileJava/compileTransaction/stash-dir/GamblingTycoon.class.uniqueId0
+.gradle/8.14.2/executionHistory/executionHistory.bin
+.gradle/8.14.2/executionHistory/executionHistory.bin
+.gradle/8.14.2/fileHashes/fileHashes.bin
+.gradle/8.14.2/fileHashes/resourceHashesCache.bin
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+build/tmp/compileJava/previous-compilation-data.bin

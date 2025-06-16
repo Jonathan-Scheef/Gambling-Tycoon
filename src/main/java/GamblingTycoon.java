@@ -17,11 +17,13 @@ public class GamblingTycoon {
     private static JPanel slotMachinePanel;
     private static JPanel topPanel; // Top-Panel als statische Variable
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
+    public static void main(String[] args) {        SwingUtilities.invokeLater(() -> {
             frame = new JFrame("Gambling Tycoon");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setUndecorated(true); // Kein Rahmen
+            frame.setAlwaysOnTop(true); // Immer im Vordergrund
+            frame.setAutoRequestFocus(true); // Automatisch Fokus anfordern
+            frame.setFocusableWindowState(true); // Fenster kann Fokus bekommen
             java.awt.GraphicsDevice gd = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if (gd.isFullScreenSupported()) {
                 frame.setResizable(false);
@@ -38,12 +40,23 @@ public class GamblingTycoon {
             topPanel = new JPanel(new BorderLayout());
             topPanel.add(Box.createHorizontalGlue(), BorderLayout.CENTER);
             topPanel.add(moneyLabel, BorderLayout.EAST);
-            frame.add(topPanel, BorderLayout.NORTH);
-
-            // Main menu panel
+            frame.add(topPanel, BorderLayout.NORTH);            // Main menu panel
             mainMenuPanel = createMainMenuPanel();
             frame.add(mainMenuPanel, BorderLayout.CENTER);
             frame.setVisible(true);
+            
+            // Zusätzliche Maßnahmen um immer im Vordergrund zu bleiben
+            frame.toFront();
+            frame.requestFocus();
+            
+            // Timer um sicherzustellen, dass das Fenster im Vordergrund bleibt
+            javax.swing.Timer stayOnTopTimer = new javax.swing.Timer(1000, e -> {
+                if (!frame.isActive()) {
+                    frame.toFront();
+                    frame.requestFocus();
+                }
+            });
+            stayOnTopTimer.start();
         });
     }
 
@@ -101,37 +114,7 @@ public class GamblingTycoon {
                 btnSlotMachine.setFont(f);
             }
         });
-        addEscapeKeyAction(buttonPanel, () -> System.exit(0));
-        return buttonPanel;
-    }
-
-    private static JPanel createGamePanel(String gameName) {
-        if (gameName.equals("Blackjack")) {
-            return Blackjack.createBlackjackPanel(() -> showMainMenuPanel());
-        }
-        if (gameName.equals("Slot Machine")) {
-            return SlotMachine.createSlotMachinePanel(() -> showMainMenuPanel());
-        }
-        JLabel label = new JLabel(gameName + " (Game UI goes here)", JLabel.CENTER);
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(label, BorderLayout.CENTER);
-        JPanel topPanel = new JPanel(new BorderLayout());
-        JButton backButton = new JButton("Back to Menu");
-        backButton.addActionListener(e -> showMainMenuPanel());
-        topPanel.add(backButton, BorderLayout.WEST);
-        panel.add(topPanel, BorderLayout.NORTH);
-        // Dynamic font resizing for label and button
-        panel.addComponentListener(new java.awt.event.ComponentAdapter() {
-            @Override
-            public void componentResized(java.awt.event.ComponentEvent e) {
-                int h = panel.getHeight();
-                int w = panel.getWidth();
-                int fontSize = Math.max(14, Math.min(w, h) / 15);
-                label.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, fontSize));
-                backButton.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, Math.max(12, fontSize / 2)));
-            }
-        });
-        return panel;
+        addEscapeKeyAction(buttonPanel, () -> System.exit(0));        return buttonPanel;
     }
 
     private static void setCenterPanel(JPanel panel) {
