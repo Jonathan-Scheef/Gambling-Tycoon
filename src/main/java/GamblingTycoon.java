@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -190,14 +191,15 @@ public class GamblingTycoon {
     // Game Over functionality
     public static void showGameOverScreen() {
         JPanel gameOverPanel = new JPanel(new BorderLayout());
-        
-        // Game Over message
+          // Game Over message
         JLabel gameOverLabel = new JLabel("GAME OVER", JLabel.CENTER);
         gameOverLabel.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 72));
         gameOverLabel.setForeground(java.awt.Color.RED);
+        gameOverLabel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         
         JLabel messageLabel = new JLabel("You ran out of money!", JLabel.CENTER);
         messageLabel.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36));
+        messageLabel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
         
         // Center panel with messages
         JPanel centerPanel = new JPanel();
@@ -206,14 +208,31 @@ public class GamblingTycoon {
         centerPanel.add(gameOverLabel);
         centerPanel.add(Box.createVerticalStrut(20));
         centerPanel.add(messageLabel);
-        centerPanel.add(Box.createVerticalStrut(40));
-        
-        // Play Again button
+        centerPanel.add(Box.createVerticalStrut(40));        // Play Again button
         JButton playAgainButton = new JButton("Play Again");
-        playAgainButton.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 24));
+        playAgainButton.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 28));
         playAgainButton.addActionListener(e -> resetGame());
-        playAgainButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-        centerPanel.add(playAgainButton);
+        
+        // Panel um Button zu zentrieren
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(null); // Absolute positioning
+        buttonPanel.add(playAgainButton);
+        buttonPanel.setPreferredSize(new Dimension(300, 70));
+        buttonPanel.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        
+        // Button positioning wird im ComponentListener gesetzt
+        buttonPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent e) {
+                // Button zentriert positionieren, aber etwas größer
+                int panelWidth = buttonPanel.getWidth();
+                int buttonWidth = 180; // Feste, größere Breite
+                int x = (panelWidth - buttonWidth) / 2;
+                playAgainButton.setBounds(x, 15, buttonWidth, 50);
+            }
+        });
+        
+        centerPanel.add(buttonPanel);
         centerPanel.add(Box.createVerticalGlue());
         
         gameOverPanel.add(centerPanel, BorderLayout.CENTER);
