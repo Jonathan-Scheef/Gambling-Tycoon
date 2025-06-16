@@ -15,17 +15,27 @@ public class GamblingTycoon {
     private static JPanel blackjackPanel;
     private static JPanel rideTheBusPanel;
     private static JPanel slotMachinePanel;
+    private static JPanel topPanel; // Top-Panel als statische Variable
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             frame = new JFrame("Gambling Tycoon");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(400, 300);
+            frame.setUndecorated(true); // Kein Rahmen
+            java.awt.GraphicsDevice gd = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            if (gd.isFullScreenSupported()) {
+                frame.setResizable(false);
+                gd.setFullScreenWindow(frame);
+            } else {
+                frame.setSize(1920, 1080);
+                frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            }
             frame.setLayout(new BorderLayout());
 
-            // Money counter at the top right
+            // Money counter am oberen Rand
             moneyLabel = new JLabel("Money: $" + money);
-            JPanel topPanel = new JPanel(new BorderLayout());
+            moneyLabel.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 48));
+            topPanel = new JPanel(new BorderLayout());
             topPanel.add(Box.createHorizontalGlue(), BorderLayout.CENTER);
             topPanel.add(moneyLabel, BorderLayout.EAST);
             frame.add(topPanel, BorderLayout.NORTH);
@@ -33,8 +43,17 @@ public class GamblingTycoon {
             // Main menu panel
             mainMenuPanel = createMainMenuPanel();
             frame.add(mainMenuPanel, BorderLayout.CENTER);
-
             frame.setVisible(true);
+        });
+    }
+
+    private static void addEscapeKeyAction(JPanel panel, Runnable action) {
+        panel.getInputMap(JPanel.WHEN_IN_FOCUSED_WINDOW).put(javax.swing.KeyStroke.getKeyStroke("ESCAPE"), "escapeAction");
+        panel.getActionMap().put("escapeAction", new javax.swing.AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                action.run();
+            }
         });
     }
 
@@ -45,9 +64,11 @@ public class GamblingTycoon {
                 int n = getComponentCount();
                 int width = getWidth();
                 int height = getHeight();
-                int buttonHeight = height / (n * 2);
+                int bottomPadding = (int) (height * 0.10); // 10% Padding unten
+                int availableHeight = height - bottomPadding;
+                int buttonHeight = availableHeight / (n * 2);
                 int buttonWidth = (int) (width * 0.7);
-                int y = height / (n + 1) - buttonHeight / 2;
+                int y = availableHeight / (n + 1) - buttonHeight / 2;
                 for (int i = 0; i < n; i++) {
                     getComponent(i).setBounds((width - buttonWidth) / 2, y, buttonWidth, buttonHeight);
                     y += buttonHeight * 2;
@@ -80,6 +101,7 @@ public class GamblingTycoon {
                 btnSlotMachine.setFont(f);
             }
         });
+        addEscapeKeyAction(buttonPanel, () -> System.exit(0));
         return buttonPanel;
     }
 
@@ -112,39 +134,60 @@ public class GamblingTycoon {
         return panel;
     }
 
-    private static void showMainMenuPanel() {
-        frame.getContentPane().removeAll();
-        // Money counter at the top right
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(Box.createHorizontalGlue(), BorderLayout.CENTER);
-        topPanel.add(moneyLabel, BorderLayout.EAST);
-        frame.add(topPanel, BorderLayout.NORTH);
-        frame.add(mainMenuPanel, BorderLayout.CENTER);
+    private static void setCenterPanel(JPanel panel) {
+        java.awt.Container contentPane = frame.getContentPane();
+        if (contentPane.getComponentCount() > 1) {
+            // Entferne das aktuelle Center-Panel (Index 1, da Index 0 das Top-Panel ist)
+            contentPane.remove(1);
+        }
+        contentPane.add(panel, BorderLayout.CENTER);
         frame.revalidate();
         frame.repaint();
     }
 
+    private static void showMainMenuPanel() {
+        setCenterPanel(mainMenuPanel);
+    }
+
     private static void showBlackjackPanel() {
-        if (blackjackPanel == null) blackjackPanel = createGamePanel("Blackjack");
-        showGamePanel(blackjackPanel);
+        if (blackjackPanel == null) {
+            blackjackPanel = createBlackjackPanel();
+            addEscapeKeyAction(blackjackPanel, GamblingTycoon::showMainMenuPanel);
+        }
+        setCenterPanel(blackjackPanel);
     }
+
     private static void showRideTheBusPanel() {
-        if (rideTheBusPanel == null) rideTheBusPanel = createGamePanel("Ride the Bus");
-        showGamePanel(rideTheBusPanel);
+        if (rideTheBusPanel == null) {
+            rideTheBusPanel = createRideTheBusPanel();
+            addEscapeKeyAction(rideTheBusPanel, GamblingTycoon::showMainMenuPanel);
+        }
+        setCenterPanel(rideTheBusPanel);
     }
+
     private static void showSlotMachinePanel() {
-        if (slotMachinePanel == null) slotMachinePanel = createGamePanel("Slot Machine");
-        showGamePanel(slotMachinePanel);
+        if (slotMachinePanel == null) {
+            slotMachinePanel = createSlotMachinePanel();
+            addEscapeKeyAction(slotMachinePanel, GamblingTycoon::showMainMenuPanel);
+        }
+        setCenterPanel(slotMachinePanel);
     }
-    private static void showGamePanel(JPanel gamePanel) {
-        frame.getContentPane().removeAll();
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(Box.createHorizontalGlue(), BorderLayout.CENTER);
-        topPanel.add(moneyLabel, BorderLayout.EAST);
-        frame.add(topPanel, BorderLayout.NORTH);
-        frame.add(gamePanel, BorderLayout.CENTER);
-        frame.revalidate();
-        frame.repaint();
+
+    private static JPanel createBlackjackPanel() {
+        return Blackjack.createBlackjackPanel(GamblingTycoon::showMainMenuPanel);
+    }
+
+    private static JPanel createSlotMachinePanel() {
+        return SlotMachine.createSlotMachinePanel(GamblingTycoon::showMainMenuPanel);
+    }
+
+    private static JPanel createRideTheBusPanel() {
+        // Platzhalter-Panel mit Escape-Key, da RideTheBus noch nicht implementiert ist
+        JPanel panel = new JPanel(new java.awt.BorderLayout());
+        javax.swing.JLabel label = new javax.swing.JLabel("Ride The Bus (noch nicht implementiert)", javax.swing.SwingConstants.CENTER);
+        panel.add(label, java.awt.BorderLayout.CENTER);
+        addEscapeKeyAction(panel, GamblingTycoon::showMainMenuPanel);
+        return panel;
     }
 
     // Call this method to update the money counter from anywhere
