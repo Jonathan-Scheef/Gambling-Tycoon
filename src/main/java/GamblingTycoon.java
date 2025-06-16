@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -184,5 +185,61 @@ public class GamblingTycoon {
     // Optionally, a method to get current money
     public static int getMoney() {
         return money;
+    }
+
+    // Game Over functionality
+    public static void showGameOverScreen() {
+        JPanel gameOverPanel = new JPanel(new BorderLayout());
+        
+        // Game Over message
+        JLabel gameOverLabel = new JLabel("GAME OVER", JLabel.CENTER);
+        gameOverLabel.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 72));
+        gameOverLabel.setForeground(java.awt.Color.RED);
+        
+        JLabel messageLabel = new JLabel("You ran out of money!", JLabel.CENTER);
+        messageLabel.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 36));
+        
+        // Center panel with messages
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
+        centerPanel.add(Box.createVerticalGlue());
+        centerPanel.add(gameOverLabel);
+        centerPanel.add(Box.createVerticalStrut(20));
+        centerPanel.add(messageLabel);
+        centerPanel.add(Box.createVerticalStrut(40));
+        
+        // Play Again button
+        JButton playAgainButton = new JButton("Play Again");
+        playAgainButton.setFont(new java.awt.Font("Arial", java.awt.Font.BOLD, 24));
+        playAgainButton.addActionListener(e -> resetGame());
+        playAgainButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        centerPanel.add(playAgainButton);
+        centerPanel.add(Box.createVerticalGlue());
+        
+        gameOverPanel.add(centerPanel, BorderLayout.CENTER);
+        
+        // Add escape key functionality
+        addEscapeKeyAction(gameOverPanel, () -> resetGame());
+        
+        // Switch to game over screen
+        frame.getContentPane().remove(frame.getContentPane().getComponent(1)); // Remove current panel
+        frame.add(gameOverPanel, BorderLayout.CENTER);
+        frame.revalidate();
+        frame.repaint();
+    }
+      public static void resetGame() {
+        money = 1000; // Reset money to starting amount
+        if (moneyLabel != null) {
+            moneyLabel.setText("Money: $" + money);
+        }
+        showMainMenu();
+    }
+    
+    public static void showMainMenu() {
+        frame.getContentPane().removeAll();
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(mainMenuPanel, BorderLayout.CENTER);
+        frame.revalidate();
+        frame.repaint();
     }
 }

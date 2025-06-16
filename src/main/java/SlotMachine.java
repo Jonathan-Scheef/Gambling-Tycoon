@@ -15,10 +15,8 @@ public class SlotMachine {
         "7.png", "Bar.png", "Diamant.png", "Glocke.png", "Herz.png", "Hufeisen.png", "Kirsche.png", "Wassermelone.png", "Zitrone.png"
     };
     private static final String SLOT_IMAGE = "assets/SlotMachine.png";
-    private static final String HEBEL_IMAGE = "assets/Hebel.png";
-
-    // Gewinnmultiplikatoren für die Symbole (von 7 bis Zitrone)
-    private static final int[] SYMBOL_VALUES = {50, 25, 20, 15, 10, 8, 6, 4, 2};
+    private static final String HEBEL_IMAGE = "assets/Hebel.png";    // Gewinnmultiplikatoren für die Symbole (von 7 bis Zitrone) - Erwartungswert ≈ 0.95
+    private static final int[] SYMBOL_VALUES = {35, 30, 25, 23, 21, 20, 18, 16, 14};
     private static JLabel resultLabel;
     private static int currentBet = 10;
 
@@ -130,9 +128,15 @@ public class SlotMachine {
             if (currentBet > GamblingTycoon.getMoney()) {
                 resultLabel.setText("Not enough money!");
                 return;
-            }
-            // Einsatz abziehen
+            }            // Einsatz abziehen
             GamblingTycoon.updateMoney(-currentBet);
+            
+            // Prüfe Game Over nach dem Einsatz
+            if (GamblingTycoon.getMoney() <= 0) {
+                GamblingTycoon.showGameOverScreen();
+                return;
+            }
+            
             // Walzen drehen
             Random rand = new Random();
             int[] reelResults = new int[3];
