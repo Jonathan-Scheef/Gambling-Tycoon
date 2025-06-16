@@ -17,6 +17,11 @@ public class SlotMachine {
     private static final String SLOT_IMAGE = "assets/SlotMachine.png";
     private static final String HEBEL_IMAGE = "assets/Hebel.png";
 
+    // Gewinnmultiplikatoren für die Symbole (von 7 bis Zitrone)
+    private static final int[] SYMBOL_VALUES = {50, 25, 20, 15, 10, 8, 6, 4, 2};
+    private static JLabel resultLabel;
+    private static int currentBet = 10;
+
     /**
      * Returns a simple outline panel for the Slot Machine game.
      * @param onBack Runnable to call when the user wants to go back to the menu
@@ -96,6 +101,11 @@ public class SlotMachine {
             }
         });
 
+        JPanel betPanel = new JPanel();
+        JLabel betLabel = new JLabel("Bet Amount:");
+        final JTextField betField = new JTextField("10", 5);
+        betPanel.add(betLabel);
+        betPanel.add(betField);
         // Hebel-Button auf dem Hebel positionieren (unsichtbar)
         JButton leverButton = new JButton();
         leverButton.setOpaque(false);
@@ -106,19 +116,54 @@ public class SlotMachine {
         leverButton.setBounds(slotW + 10, slotH/4 + 10, leverW - 20, leverH - 20);
         centerPanel.add(leverButton);        // Action: Symbole zufällig setzen
         leverButton.addActionListener(e -> {
+            // Einsatz prüfen
+            try {
+                currentBet = Integer.parseInt(betField.getText());
+                if (currentBet <= 0) {
+                    resultLabel.setText("Invalid bet amount!");
+                    return;
+                }
+            } catch (NumberFormatException ex) {
+                resultLabel.setText("Please enter a valid number!");
+                return;
+            }
+            if (currentBet > GamblingTycoon.getMoney()) {
+                resultLabel.setText("Not enough money!");
+                return;
+            }
+            // Einsatz abziehen
+            GamblingTycoon.updateMoney(-currentBet);
+            // Walzen drehen
             Random rand = new Random();
+            int[] reelResults = new int[3];
             for (int i = 0; i < 3; i++) {
                 int idx = rand.nextInt(symbolIcons.length);
-                // Symbol skalieren auf 120x120
+                reelResults[i] = idx;
                 java.awt.Image scaledImage = symbolIcons[idx].getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH);
                 reels[i].setIcon(new ImageIcon(scaledImage));
-            }            // Symbole auf Slotmachine zentrieren
+            }
+            // Gewinn berechnen
+            int winnings = calculateWinnings(reelResults);
+            if (winnings > 0) {
+                GamblingTycoon.updateMoney(winnings);
+                if (reelResults[0] == reelResults[1] && reelResults[1] == reelResults[2]) {
+                    resultLabel.setText("JACKPOT! You win $" + winnings + "!");
+                } else {
+                    resultLabel.setText("You win $" + winnings + "!");
+                }
+            } else {
+                resultLabel.setText("Try again!");
+            }
+            // Symbole zentrieren
             int cx = (centerPanel.getWidth() - slotW) / 2;
-            int cy = (centerPanel.getHeight() - slotH) / 2;            for (int i = 0; i < 3; i++) {
-                int x = cx + slotW/4 + i*(slotW/4) - 20; // Noch weiter rechts
+            int cy = (centerPanel.getHeight() - slotH) / 2;
+            for (int i = 0; i < 3; i++) {
+                int x = cx + slotW/4 + i*(slotW/4) - 20;
                 int y = cy + slotH/2 - 60;
                 reels[i].setLocation(x, y);
-            }});        // Initiale Positionierung der Symbole
+            }
+        });
+        // Initiale Positionierung der Symbole
         centerPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
@@ -149,18 +194,16 @@ public class SlotMachine {
 
         // Bottom panel for betting controls (zentriert und höher)
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        JPanel betPanel = new JPanel();
-        JLabel betLabel = new JLabel("Bet Amount:");
-        JTextField betField = new JTextField("10", 5);
-        betPanel.add(betLabel);
-        betPanel.add(betField);
         
         // Spacing für die Positionierung
         bottomPanel.add(Box.createVerticalStrut(50), BorderLayout.NORTH); // Abstand nach oben
         bottomPanel.add(betPanel, BorderLayout.CENTER);
         bottomPanel.add(Box.createVerticalStrut(100), BorderLayout.SOUTH); // Abstand nach unten
         
-        panel.add(bottomPanel, BorderLayout.SOUTH);        // Dynamic font resizing for all labels and buttons
+        panel.add(bottomPanel, BorderLayout.SOUTH);        // Result Label für Gewinn-Anzeige
+        resultLabel = new JLabel("Pull the lever to start!");
+        resultLabel.setHorizontalAlignment(JLabel.CENTER);
+        bottomPanel.add(resultLabel, BorderLayout.SOUTH);        // Dynamic font resizing for all labels and buttons
         panel.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent e) {
@@ -170,8 +213,23 @@ public class SlotMachine {
                 betLabel.setFont(new Font("Arial", Font.BOLD, fontSize));
                 betField.setFont(new Font("Arial", Font.PLAIN, fontSize));
                 backButton.setFont(new Font("Arial", Font.PLAIN, Math.max(12, fontSize / 2)));
+                resultLabel.setFont(new Font("Arial", Font.BOLD, Math.max(16, fontSize)));
             }
         });
         return panel;
+    }
+
+    // Gewinnberechnung
+    private static int calculateWinnings(int[] reels) {
+        // Drei gleiche
+        if (reels[0] == reels[1] && reels[1] == reels[2]) {
+            return currentBet * SYMBOL_VALUES[reels[0]];
+        }
+        // Zwei gleiche
+        if (reels[0] == reels[1] || reels[1] == reels[2] || reels[0] == reels[2]) {
+            int symbol = reels[0] == reels[1] ? reels[0] : (reels[1] == reels[2] ? reels[1] : reels[0]);
+            return currentBet * (SYMBOL_VALUES[symbol] / 10);
+        }
+        return 0;
     }
 }
