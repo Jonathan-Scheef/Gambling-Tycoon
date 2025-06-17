@@ -1,8 +1,17 @@
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class RideTheBus {
     // Karten-Datenstrukturen
@@ -10,8 +19,8 @@ public class RideTheBus {
         public enum Suit { HEARTS, DIAMONDS, CLUBS, SPADES }
         public enum Rank { TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING, ACE }
         
-        private Suit suit;
-        private Rank rank;
+        private final Suit suit;
+        private final Rank rank;
         
         public Card(Suit suit, Rank rank) {
             this.suit = suit;
@@ -24,22 +33,20 @@ public class RideTheBus {
         }
         
         public String getDisplayName() {
-            String rankStr = "";
-            switch(rank) {
-                case ACE: rankStr = "A"; break;
-                case JACK: rankStr = "J"; break;
-                case QUEEN: rankStr = "Q"; break;
-                case KING: rankStr = "K"; break;
-                default: rankStr = String.valueOf(getValue());
-            }
+            String rankStr = switch(rank) {
+                case ACE -> "A";
+                case JACK -> "J";
+                case QUEEN -> "Q";
+                case KING -> "K";
+                default -> String.valueOf(getValue());
+            };
             
-            String suitStr = "";
-            switch(suit) {
-                case HEARTS: suitStr = "♥"; break;
-                case DIAMONDS: suitStr = "♦"; break;
-                case CLUBS: suitStr = "♣"; break;
-                case SPADES: suitStr = "♠"; break;
-            }
+            String suitStr = switch(suit) {
+                case HEARTS -> "♥";
+                case DIAMONDS -> "♦";
+                case CLUBS -> "♣";
+                case SPADES -> "♠";
+            };
             
             return rankStr + suitStr;
         }
@@ -238,14 +245,20 @@ public class RideTheBus {
         insideButton.setPreferredSize(buttonSize);
         insideButton.setBackground(Color.BLUE);
         insideButton.setForeground(Color.WHITE);
-        insideButton.addActionListener(e -> makeInsideOutsideChoice(true));
+        insideButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeInsideOutsideChoice(true);
+        });
         
         outsideButton = new JButton("OUTSIDE");
         outsideButton.setFont(buttonFont);
         outsideButton.setPreferredSize(buttonSize);
         outsideButton.setBackground(Color.MAGENTA);
         outsideButton.setForeground(Color.WHITE);
-        outsideButton.addActionListener(e -> makeInsideOutsideChoice(false));
+        outsideButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeInsideOutsideChoice(false);
+        });
         
         // Round 4 Buttons (Suits)
         heartsButton = new JButton("♥");
@@ -253,28 +266,40 @@ public class RideTheBus {
         heartsButton.setPreferredSize(buttonSize);
         heartsButton.setBackground(Color.WHITE);
         heartsButton.setForeground(Color.RED);
-        heartsButton.addActionListener(e -> makeSuitChoice(Card.Suit.HEARTS));
+        heartsButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeSuitChoice(Card.Suit.HEARTS);
+        });
         
         diamondsButton = new JButton("♦");
         diamondsButton.setFont(new Font("Arial", Font.BOLD, 36));
         diamondsButton.setPreferredSize(buttonSize);
         diamondsButton.setBackground(Color.WHITE);
         diamondsButton.setForeground(Color.RED);
-        diamondsButton.addActionListener(e -> makeSuitChoice(Card.Suit.DIAMONDS));
+        diamondsButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeSuitChoice(Card.Suit.DIAMONDS);
+        });
         
         clubsButton = new JButton("♣");
         clubsButton.setFont(new Font("Arial", Font.BOLD, 36));
         clubsButton.setPreferredSize(buttonSize);
         clubsButton.setBackground(Color.WHITE);
         clubsButton.setForeground(Color.BLACK);
-        clubsButton.addActionListener(e -> makeSuitChoice(Card.Suit.CLUBS));
+        clubsButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeSuitChoice(Card.Suit.CLUBS);
+        });
         
         spadesButton = new JButton("♠");
         spadesButton.setFont(new Font("Arial", Font.BOLD, 36));
         spadesButton.setPreferredSize(buttonSize);
         spadesButton.setBackground(Color.WHITE);
         spadesButton.setForeground(Color.BLACK);
-        spadesButton.addActionListener(e -> makeSuitChoice(Card.Suit.SPADES));
+        spadesButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeSuitChoice(Card.Suit.SPADES);
+        });
     }
     
     private static void setupInitialButtons() {
@@ -560,17 +585,12 @@ public class RideTheBus {
         
         // Calculate correct multiplier based on number of drawn cards (completed rounds)
         int completedRounds = drawnCards.size();
-        int completedMultiplier;
-        
-        if (completedRounds == 1) {
-            completedMultiplier = 2; // After completing Round 1 (color)
-        } else if (completedRounds == 2) {
-            completedMultiplier = 3; // After completing Round 2 (higher/lower)
-        } else if (completedRounds == 3) {
-            completedMultiplier = 4; // After completing Round 3 (inside/outside)
-        } else {
-            completedMultiplier = 1; // Fallback
-        }
+        int completedMultiplier = switch(completedRounds) {
+            case 1 -> 2; // After completing Round 1 (color)
+            case 2 -> 3; // After completing Round 2 (higher/lower)
+            case 3 -> 4; // After completing Round 3 (inside/outside)
+            default -> 1; // Fallback
+        };
         
         int winnings = currentBet * completedMultiplier;
         GamblingTycoon.updateMoney(winnings);
@@ -605,17 +625,14 @@ public class RideTheBus {
             roundTimer.stop();
         }
         
-        roundTimer = new javax.swing.Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                timeLeft--;
-                timerLabel.setText("Time: " + timeLeft);
-                
-                if (timeLeft <= 0) {
-                    stopTimer();
-                    instructionLabel.setText("Time's up! You lose!");
-                    endGame(false);
-                }
+        roundTimer = new javax.swing.Timer(1000, e -> {
+            timeLeft--;
+            timerLabel.setText("Time: " + timeLeft);
+            
+            if (timeLeft <= 0) {
+                stopTimer();
+                instructionLabel.setText("Time's up! You lose!");
+                endGame(false);
             }
         });
         roundTimer.start();
