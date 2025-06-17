@@ -154,11 +154,10 @@ public class SlotMachine {
             for (int i = 0; i < 3; i++) {
                 finalResults[i] = rand.nextInt(symbolIcons.length);
             }
-            
-            // Spinning-Animation starten
+              // Spinning-Animation starten
             javax.swing.Timer spinTimer = new javax.swing.Timer(100, null);
             final int[] spinCount = {0};
-            final int totalSpins = 50; // 5 Sekunden bei 100ms Intervall
+            final int totalSpins = 30; // 3 Sekunden bei 100ms Intervall
             
             spinTimer.addActionListener(spinEvent -> {
                 // Zufällige Symbole während Animation
