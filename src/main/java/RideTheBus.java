@@ -173,11 +173,11 @@ public class RideTheBus {
         
         return panel;
     }
-    
-    private static void createButtons() {
+      private static void createButtons() {
         Font buttonFont = new Font("Arial", Font.BOLD, 24);
         Dimension buttonSize = new Dimension(180, 60);
-          // Control Buttons
+        
+        // Control Buttons
         startButton = new JButton("Start Game");
         startButton.setFont(buttonFont);
         startButton.setPreferredSize(buttonSize);
@@ -211,10 +211,10 @@ public class RideTheBus {
         blackButton.setForeground(Color.WHITE);
         blackButton.addActionListener(e -> {
             SoundPlayer.playSound("assets/Button Click.wav");
-            makeColorChoice(false);
-        });
+            makeColorChoice(false);        });
         
-        // Round 2 Buttons (Higher/Lower)        higherButton = new JButton("HIGHER");
+        // Round 2 Buttons (Higher/Lower)
+        higherButton = new JButton("HIGHER");
         higherButton.setFont(buttonFont);
         higherButton.setPreferredSize(buttonSize);
         higherButton.setBackground(Color.GREEN);
