@@ -113,6 +113,9 @@ public class SlotMachine {
         leverButton.setText(""); // Kein Text
         leverButton.setBounds(slotW + 10, slotH/4 + 10, leverW - 20, leverH - 20);        centerPanel.add(leverButton);        // Action: Symbole zufällig setzen
         leverButton.addActionListener(e -> {
+            // Button Click Sound
+            SoundPlayer.playSound("assets/Button Click.wav");
+            
             // Verhindere mehrfaches Klicken während Animation
             if (!leverButton.isEnabled()) return;
             

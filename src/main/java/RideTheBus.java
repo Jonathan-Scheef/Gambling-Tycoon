@@ -177,45 +177,60 @@ public class RideTheBus {
     private static void createButtons() {
         Font buttonFont = new Font("Arial", Font.BOLD, 24);
         Dimension buttonSize = new Dimension(180, 60);
-        
-        // Control Buttons
+          // Control Buttons
         startButton = new JButton("Start Game");
         startButton.setFont(buttonFont);
         startButton.setPreferredSize(buttonSize);
-        startButton.addActionListener(e -> startNewGame());
+        startButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            startNewGame();
+        });
         
         cashOutButton = new JButton("Cash Out");
         cashOutButton.setFont(buttonFont);
         cashOutButton.setPreferredSize(buttonSize);
-        cashOutButton.addActionListener(e -> cashOut());
+        cashOutButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            cashOut();
+        });
         
         // Round 1 Buttons (Color)
         redButton = new JButton("RED");
         redButton.setFont(buttonFont);
         redButton.setPreferredSize(buttonSize);
         redButton.setBackground(Color.RED);
-        redButton.setForeground(Color.WHITE);
-        redButton.addActionListener(e -> makeColorChoice(true));
+        redButton.setForeground(Color.WHITE);        redButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeColorChoice(true);
+        });
         
         blackButton = new JButton("BLACK");
         blackButton.setFont(buttonFont);
         blackButton.setPreferredSize(buttonSize);
         blackButton.setBackground(Color.BLACK);
         blackButton.setForeground(Color.WHITE);
-        blackButton.addActionListener(e -> makeColorChoice(false));
+        blackButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeColorChoice(false);
+        });
         
-        // Round 2 Buttons (Higher/Lower)
-        higherButton = new JButton("HIGHER");
+        // Round 2 Buttons (Higher/Lower)        higherButton = new JButton("HIGHER");
         higherButton.setFont(buttonFont);
         higherButton.setPreferredSize(buttonSize);
         higherButton.setBackground(Color.GREEN);
-        higherButton.addActionListener(e -> makeHigherLowerChoice(true));
+        higherButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeHigherLowerChoice(true);
+        });
         
         lowerButton = new JButton("LOWER");
         lowerButton.setFont(buttonFont);
         lowerButton.setPreferredSize(buttonSize);
         lowerButton.setBackground(Color.ORANGE);
-        lowerButton.addActionListener(e -> makeHigherLowerChoice(false));
+        lowerButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            makeHigherLowerChoice(false);
+        });
         
         // Round 3 Buttons (Inside/Outside)
         insideButton = new JButton("INSIDE");
@@ -339,10 +354,10 @@ public class RideTheBus {
         
         boolean isRed = drawnCard.isRed();
         boolean correct = (chooseRed && isRed) || (!chooseRed && !isRed);
-        
-        updateCardDisplay();
+          updateCardDisplay();
         
         if (correct) {
+            SoundPlayer.playSound("assets/Win.wav");
             instructionLabel.setText("Correct! The card was " + (isRed ? "RED" : "BLACK") + "!");
             proceedToRound2();
         } else {

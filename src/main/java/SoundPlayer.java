@@ -62,6 +62,22 @@ public class SoundPlayer {
         playSound("assets/Win.wav");
     }
     
+    public static void playButtonClick() {
+        playSound("assets/Button Click.wav");
+    }
+    
+    public static void playCardDeal() {
+        playSound("assets/single card deal.wav");
+    }
+    
+    public static void playCardDealVariant() {
+        playSound("assets/single card deal var.wav");
+    }
+    
+    public static void playFiveCardDeal() {
+        playSound("assets/five card deal.mp3"); // Will try WAV version first if available
+    }
+    
     public static void setSoundEnabled(boolean enabled) {
         soundEnabled = enabled;
     }

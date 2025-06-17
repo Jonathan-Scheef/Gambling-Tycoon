@@ -172,12 +172,23 @@ public class Blackjack {
         standButton.setPreferredSize(buttonSize);
         doubleButton.setFont(buttonFont);
         doubleButton.setPreferredSize(buttonSize);
-        
-        // Button-Aktionen
-        dealButton.addActionListener(e -> startNewGame());
-        hitButton.addActionListener(e -> playerHit());
-        standButton.addActionListener(e -> playerStand());
-        doubleButton.addActionListener(e -> playerDouble());
+          // Button-Aktionen
+        dealButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            startNewGame();
+        });
+        hitButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            playerHit();
+        });
+        standButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            playerStand();
+        });
+        doubleButton.addActionListener(e -> {
+            SoundPlayer.playSound("assets/Button Click.wav");
+            playerDouble();
+        });
         
         buttonPanel.add(dealButton);
         buttonPanel.add(hitButton);
@@ -246,10 +257,34 @@ public class Blackjack {
             initializeDeck();
         }
         
+        // Card deal sounds
+        SoundPlayer.playSound("assets/single card deal.wav");
         playerHand.add(deck.remove(deck.size() - 1));
-        dealerHand.add(deck.remove(deck.size() - 1));
-        playerHand.add(deck.remove(deck.size() - 1));
-        dealerHand.add(deck.remove(deck.size() - 1));
+        
+        javax.swing.Timer dealTimer1 = new javax.swing.Timer(300, e -> {
+            SoundPlayer.playSound("assets/single card deal var.wav");
+            dealerHand.add(deck.remove(deck.size() - 1));
+            ((javax.swing.Timer)e.getSource()).stop();
+        });
+        dealTimer1.setRepeats(false);
+        dealTimer1.start();
+        
+        javax.swing.Timer dealTimer2 = new javax.swing.Timer(600, e -> {
+            SoundPlayer.playSound("assets/single card deal.wav");
+            playerHand.add(deck.remove(deck.size() - 1));
+            ((javax.swing.Timer)e.getSource()).stop();
+        });
+        dealTimer2.setRepeats(false);
+        dealTimer2.start();
+        
+        javax.swing.Timer dealTimer3 = new javax.swing.Timer(900, e -> {
+            SoundPlayer.playSound("assets/single card deal var.wav");
+            dealerHand.add(deck.remove(deck.size() - 1));
+            updateDisplay();
+            ((javax.swing.Timer)e.getSource()).stop();
+        });
+        dealTimer3.setRepeats(false);
+        dealTimer3.start();
         
         gameActive = true;
         dealerTurn = false;
@@ -261,13 +296,13 @@ public class Blackjack {
         hitButton.setEnabled(true);
         standButton.setEnabled(true);
         doubleButton.setEnabled(true);
-        
-        // Prüfe auf Blackjack
+          // Prüfe auf Blackjack
         if (getHandValue(playerHand) == 21) {
             if (getHandValue(dealerHand) == 21) {
                 endGame("Push! Both have Blackjack!");
                 GamblingTycoon.updateMoney(currentBet); // Einsatz zurück
             } else {
+                SoundPlayer.playSound("assets/Win.wav");
                 endGame("Blackjack! You win!");
                 GamblingTycoon.updateMoney((int)(currentBet * 2.5)); // 2.5x Auszahlung für Blackjack
             }
@@ -282,6 +317,7 @@ public class Blackjack {
             initializeDeck();
         }
         
+        SoundPlayer.playSound("assets/single card deal.wav");
         playerHand.add(deck.remove(deck.size() - 1));
         updateDisplay();
         
@@ -306,11 +342,13 @@ public class Blackjack {
         javax.swing.Timer dealerTimer = new javax.swing.Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getHandValue(dealerHand) < 17) {                    // Deck-Check vor Dealer-Hit
+                if (getHandValue(dealerHand) < 17) {
+                    // Deck-Check vor Dealer-Hit
                     if (deck.size() < 1) {
                         showShufflingMessage();
                         initializeDeck();
                     }
+                    SoundPlayer.playSound("assets/single card deal var.wav");
                     dealerHand.add(deck.remove(deck.size() - 1));
                     updateDisplay();
                 } else {
@@ -321,9 +359,11 @@ public class Blackjack {
                     int dealerScore = getHandValue(dealerHand);
                     
                     if (dealerScore > 21) {
+                        SoundPlayer.playSound("assets/Win.wav");
                         endGame("Dealer busts! You win!");
                         GamblingTycoon.updateMoney(currentBet * 2);
                     } else if (playerScore > dealerScore) {
+                        SoundPlayer.playSound("assets/Win.wav");
                         endGame("You win!");
                         GamblingTycoon.updateMoney(currentBet * 2);
                     } else if (dealerScore > playerScore) {
