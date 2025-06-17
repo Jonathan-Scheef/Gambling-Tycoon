@@ -1,6 +1,14 @@
-import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class SoundPlayer {
     private static boolean soundEnabled = true;
@@ -47,16 +55,13 @@ public class SoundPlayer {
             clip.start();
             
             // Clean up resources when sound finishes
-            clip.addLineListener(new LineListener() {
-                @Override
-                public void update(LineEvent event) {
-                    if (event.getType() == LineEvent.Type.STOP) {
-                        clip.close();
-                        try {
-                            audioInputStream.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+            clip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    clip.close();
+                    try {
+                        audioInputStream.close();
+                    } catch (IOException e) {
+                        System.err.println("Error closing audio stream: " + e.getMessage());
                     }
                 }
             });
@@ -68,8 +73,7 @@ public class SoundPlayer {
                 mp3SupportWarningShown = true;
             }
         } catch (IOException | LineUnavailableException e) {
-            System.err.println("Error playing sound: " + soundFile);
-            e.printStackTrace();
+            System.err.println("Error playing sound: " + soundFile + " - " + e.getMessage());
         }
     }    public static void playLeverPull() {
         playSound("assets/LeverPull.wav");

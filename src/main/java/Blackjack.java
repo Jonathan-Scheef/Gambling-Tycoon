@@ -1,9 +1,18 @@
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
-import java.util.List;
-import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class Blackjack {
     // Karten-Datenstrukturen
@@ -11,48 +20,46 @@ public class Blackjack {
         public enum Suit { HEARTS, DIAMONDS, CLUBS, SPADES }
         public enum Rank { ACE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, JACK, QUEEN, KING }
         
-        private Suit suit;
-        private Rank rank;
+        private final Suit suit;
+        private final Rank rank;
         
         public Card(Suit suit, Rank rank) {
             this.suit = suit;
             this.rank = rank;
-        }        public int getValue() {
-            switch(rank) {
-                case ACE: return 11; // Ace kann 1 oder 11 sein
-                case TWO: return 2;
-                case THREE: return 3;
-                case FOUR: return 4;
-                case FIVE: return 5;
-                case SIX: return 6;
-                case SEVEN: return 7;
-                case EIGHT: return 8;
-                case NINE: return 9;
-                case TEN: return 10;
-                case JACK: return 10;
-                case QUEEN: return 10;
-                case KING: return 10;
-                default: return 0;
-            }
+        }
+        
+        public int getValue() {
+            return switch(rank) {
+                case ACE -> 11; // Ace kann 1 oder 11 sein
+                case TWO -> 2;
+                case THREE -> 3;
+                case FOUR -> 4;
+                case FIVE -> 5;
+                case SIX -> 6;
+                case SEVEN -> 7;
+                case EIGHT -> 8;
+                case NINE -> 9;
+                case TEN -> 10;
+                case JACK, QUEEN, KING -> 10;
+                default -> 0;
+            };
         }
         
         public String getDisplayName() {
-            String rankStr = "";
-            switch(rank) {
-                case ACE: rankStr = "A"; break;
-                case JACK: rankStr = "J"; break;
-                case QUEEN: rankStr = "Q"; break;
-                case KING: rankStr = "K"; break;
-                default: rankStr = String.valueOf(rank.ordinal() + 1);
-            }
+            String rankStr = switch(rank) {
+                case ACE -> "A";
+                case JACK -> "J";
+                case QUEEN -> "Q";
+                case KING -> "K";
+                default -> String.valueOf(rank.ordinal() + 1);
+            };
             
-            String suitStr = "";
-            switch(suit) {
-                case HEARTS: suitStr = "♥"; break;
-                case DIAMONDS: suitStr = "♦"; break;
-                case CLUBS: suitStr = "♣"; break;
-                case SPADES: suitStr = "♠"; break;
-            }
+            String suitStr = switch(suit) {
+                case HEARTS -> "♥";
+                case DIAMONDS -> "♦";
+                case CLUBS -> "♣";
+                case SPADES -> "♠";
+            };
             
             return rankStr + suitStr;
         }
@@ -91,7 +98,8 @@ public class Blackjack {
         JButton backButton = new JButton("Back to Menu");
         backButton.addActionListener(e -> onBack.run());
         topPanel.add(backButton, BorderLayout.WEST);
-          // Game Info Panel
+        
+        // Game Info Panel
         JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         betLabel = new JLabel("Bet: $10");
         betLabel.setFont(new Font("Arial", Font.BOLD, 32));
@@ -108,7 +116,9 @@ public class Blackjack {
         
         // Haupt-Spielbereich
         JPanel gamePanel = new JPanel(new BorderLayout());
-        gamePanel.setBackground(new Color(0, 100, 0)); // Dunkelgrün wie Filz        // Dealer-Bereich
+        gamePanel.setBackground(new Color(0, 100, 0)); // Dunkelgrün wie Filz
+        
+        // Dealer-Bereich
         JPanel dealerPanel = new JPanel(new BorderLayout());
         dealerPanel.setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.WHITE, 3), 
@@ -154,13 +164,15 @@ public class Blackjack {
         gamePanel.add(resultLabel, BorderLayout.CENTER);
         
         panel.add(gamePanel, BorderLayout.CENTER);
-          // Button Panel
+        
+        // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout());
         dealButton = new JButton("Deal");
         hitButton = new JButton("Hit");
         standButton = new JButton("Stand");
         doubleButton = new JButton("Double Down");
-          // Button-Größe und Font setzen
+        
+        // Button-Größe und Font setzen
         Font buttonFont = new Font("Arial", Font.BOLD, 28);
         Dimension buttonSize = new Dimension(200, 70);
         
@@ -172,7 +184,8 @@ public class Blackjack {
         standButton.setPreferredSize(buttonSize);
         doubleButton.setFont(buttonFont);
         doubleButton.setPreferredSize(buttonSize);
-          // Button-Aktionen
+        
+        // Button-Aktionen
         dealButton.addActionListener(e -> {
             SoundPlayer.playSound("assets/Button Click.wav");
             startNewGame();
@@ -218,7 +231,8 @@ public class Blackjack {
         Collections.shuffle(deck);
     }
     
-    private static void startNewGame() {        try {
+    private static void startNewGame() {
+        try {
             currentBet = Integer.parseInt(betField.getText());
             if (currentBet <= 0) {
                 SoundPlayer.playError();
@@ -238,12 +252,15 @@ public class Blackjack {
         
         // Einsatz abziehen
         GamblingTycoon.updateMoney(-currentBet);
-        betLabel.setText("Bet: $" + currentBet);        // Deck neu mischen wenn weniger als 10 Karten oder leer
+        betLabel.setText("Bet: $" + currentBet);
+        
+        // Deck neu mischen wenn weniger als 10 Karten oder leer
         if (deck == null || deck.size() < 10) {
             showShufflingMessage();
             initializeDeck();
         }
-          // Hände leeren und neu initialisieren
+        
+        // Hände leeren und neu initialisieren
         if (playerHand == null) {
             playerHand = new ArrayList<>();
         } else {
@@ -253,7 +270,9 @@ public class Blackjack {
             dealerHand = new ArrayList<>();
         } else {
             dealerHand.clear();
-        }        // Karten austeilen (mit Sicherheitsprüfung)
+        }
+        
+        // Karten austeilen (mit Sicherheitsprüfung)
         if (deck.size() < 4) {
             showShufflingMessage();
             initializeDeck();
@@ -262,7 +281,8 @@ public class Blackjack {
         // Card deal sounds
         SoundPlayer.playSound("assets/single card deal.wav");
         playerHand.add(deck.remove(deck.size() - 1));
-          javax.swing.Timer dealTimer1 = new javax.swing.Timer(300, e -> {
+        
+        javax.swing.Timer dealTimer1 = new javax.swing.Timer(300, e -> {
             SoundPlayer.playSound("assets/single card deal.wav");
             dealerHand.add(deck.remove(deck.size() - 1));
             ((javax.swing.Timer)e.getSource()).stop();
@@ -277,7 +297,8 @@ public class Blackjack {
         });
         dealTimer2.setRepeats(false);
         dealTimer2.start();
-          javax.swing.Timer dealTimer3 = new javax.swing.Timer(900, e -> {
+        
+        javax.swing.Timer dealTimer3 = new javax.swing.Timer(900, e -> {
             SoundPlayer.playSound("assets/single card deal.wav");
             dealerHand.add(deck.remove(deck.size() - 1));
             updateDisplay();
@@ -295,8 +316,11 @@ public class Blackjack {
         dealButton.setEnabled(false);
         hitButton.setEnabled(true);
         standButton.setEnabled(true);
-        doubleButton.setEnabled(true);        // Prüfe auf Blackjack
-        if (getHandValue(playerHand) == 21) {            if (getHandValue(dealerHand) == 21) {
+        doubleButton.setEnabled(true);
+        
+        // Prüfe auf Blackjack
+        if (getHandValue(playerHand) == 21) {
+            if (getHandValue(dealerHand) == 21) {
                 GamblingTycoon.updateMoney(currentBet); // Einsatz zurück
                 endGame("Push! Both have Blackjack!");
             } else {
@@ -308,8 +332,11 @@ public class Blackjack {
         
         resultLabel.setText("Your turn!");
     }
-      private static void playerHit() {
-        if (!gameActive || dealerTurn) return;        // Deck-Check vor Hit
+    
+    private static void playerHit() {
+        if (!gameActive || dealerTurn) return;
+        
+        // Deck-Check vor Hit
         if (deck.size() < 1) {
             showShufflingMessage();
             initializeDeck();
@@ -318,7 +345,9 @@ public class Blackjack {
         SoundPlayer.playSound("assets/single card deal.wav");
         playerHand.add(deck.remove(deck.size() - 1));
         updateDisplay();
-          int playerScore = getHandValue(playerHand);        if (playerScore > 21) {
+        
+        int playerScore = getHandValue(playerHand);
+        if (playerScore > 21) {
             SoundPlayer.playError();
             endGame("Bust! You lose!");
         } else if (playerScore == 21) {
@@ -335,44 +364,47 @@ public class Blackjack {
         dealerTurn = true;
         hitButton.setEnabled(false);
         standButton.setEnabled(false);
-        doubleButton.setEnabled(false);        // Dealer spielt
-        javax.swing.Timer dealerTimer = new javax.swing.Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (getHandValue(dealerHand) < 17) {                    // Deck-Check vor Dealer-Hit
-                    if (deck.size() < 1) {
-                        showShufflingMessage();
-                        initializeDeck();
-                    }
-                    SoundPlayer.playSound("assets/single card deal.wav");
-                    dealerHand.add(deck.remove(deck.size() - 1));
-                    updateDisplay();
+        doubleButton.setEnabled(false);
+        
+        // Dealer spielt
+        javax.swing.Timer dealerTimer = new javax.swing.Timer(1000, e -> {
+            if (getHandValue(dealerHand) < 17) {
+                // Deck-Check vor Dealer-Hit
+                if (deck.size() < 1) {
+                    showShufflingMessage();
+                    initializeDeck();
+                }
+                SoundPlayer.playSound("assets/single card deal.wav");
+                dealerHand.add(deck.remove(deck.size() - 1));
+                updateDisplay();
+            } else {
+                ((javax.swing.Timer)e.getSource()).stop();
+                
+                // Gewinner bestimmen
+                int playerScore = getHandValue(playerHand);
+                int dealerScore = getHandValue(dealerHand);
+                
+                if (dealerScore > 21) {
+                    SoundPlayer.playSound("assets/Button Click.wav");
+                    GamblingTycoon.updateMoney(currentBet * 2);
+                    endGame("Dealer busts! You win!");
+                } else if (playerScore > dealerScore) {
+                    SoundPlayer.playSound("assets/Button Click.wav");
+                    GamblingTycoon.updateMoney(currentBet * 2);
+                    endGame("You win!");
+                } else if (dealerScore > playerScore) {
+                    SoundPlayer.playError();
+                    endGame("Dealer wins!");
                 } else {
-                    ((javax.swing.Timer)e.getSource()).stop();
-                    
-                    // Gewinner bestimmen
-                    int playerScore = getHandValue(playerHand);
-                    int dealerScore = getHandValue(dealerHand);                    if (dealerScore > 21) {
-                        SoundPlayer.playSound("assets/Button Click.wav");
-                        GamblingTycoon.updateMoney(currentBet * 2);
-                        endGame("Dealer busts! You win!");
-                    } else if (playerScore > dealerScore) {
-                        SoundPlayer.playSound("assets/Button Click.wav");
-                        GamblingTycoon.updateMoney(currentBet * 2);
-                        endGame("You win!");
-                    } else if (dealerScore > playerScore) {
-                        SoundPlayer.playError();
-                        endGame("Dealer wins!");
-                    } else {
-                        GamblingTycoon.updateMoney(currentBet); // Einsatz zurück
-                        endGame("Push! It's a tie!");
-                    }
+                    GamblingTycoon.updateMoney(currentBet); // Einsatz zurück
+                    endGame("Push! It's a tie!");
                 }
             }
         });
         dealerTimer.start();
     }
-      private static void playerDouble() {
+    
+    private static void playerDouble() {
         if (!gameActive || dealerTurn || playerHand.size() > 2) return;
         
         // Prüfe ob genug Geld für Double Down
@@ -438,7 +470,8 @@ public class Blackjack {
         
         return value;
     }
-      private static void updateDisplay() {
+    
+    private static void updateDisplay() {
         // Player-Karten anzeigen
         playerCardsPanel.removeAll();
         if (playerHand != null) {
@@ -453,7 +486,7 @@ public class Blackjack {
         
         // Dealer-Karten anzeigen
         dealerCardsPanel.removeAll();
-        if (dealerHand != null && dealerHand.size() > 0) {
+        if (dealerHand != null && !dealerHand.isEmpty()) {
             for (int i = 0; i < dealerHand.size(); i++) {
                 JLabel cardLabel;
                 // Zweite Karte nur verdeckt wenn Spiel aktiv und noch nicht Dealer-Turn
@@ -481,7 +514,9 @@ public class Blackjack {
         playerCardsPanel.repaint();
         dealerCardsPanel.revalidate();
         dealerCardsPanel.repaint();
-    }private static JLabel createCardLabel(Card card) {
+    }
+    
+    private static JLabel createCardLabel(Card card) {
         JLabel label = new JLabel(card.getDisplayName(), JLabel.CENTER);
         label.setPreferredSize(new Dimension(140, 200));
         label.setBorder(BorderFactory.createRaisedBevelBorder());
