@@ -506,15 +506,27 @@ public class RideTheBus {
             endGame(false);
         }
     }
-    
-    private static void cashOut() {
+      private static void cashOut() {
         if (!gameActive || currentRound < 2) return;
         
         stopTimer();
-        int winnings = currentBet * (currentMultiplier - 1); // Current multiplier from previous round
+        
+        // Calculate correct multiplier based on completed rounds
+        int completedMultiplier;
+        if (currentRound == 2) {
+            completedMultiplier = 2; // After completing Round 1
+        } else if (currentRound == 3) {
+            completedMultiplier = 3; // After completing Round 2
+        } else if (currentRound == 4) {
+            completedMultiplier = 4; // After completing Round 3
+        } else {
+            completedMultiplier = 1; // Fallback
+        }
+        
+        int winnings = currentBet * completedMultiplier;
         GamblingTycoon.updateMoney(winnings);
         
-        instructionLabel.setText("Cashed out! You won $" + winnings + "!");
+        instructionLabel.setText("Cashed out! You won $" + winnings + " (Bet: $" + currentBet + " x " + completedMultiplier + ")!");
         endGame(true);
     }
     
