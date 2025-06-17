@@ -1,0 +1,19 @@
+<svg width="120" height="40" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="buttonGradient_NEW GAME" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#607D8B;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#607D8B;stop-opacity:0.7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Button shadow -->
+  <rect x="3" y="3" width="118" height="38" rx="8" ry="8" fill="#000000" opacity="0.3"/>
+
+  <!-- Button body -->
+  <rect x="0" y="0" width="117" height="37" rx="8" ry="8" 
+        fill="url(#buttonGradient_NEW GAME)" stroke="#000000" stroke-width="1"/>
+
+  <!-- Button text -->
+  <text x="60" y="25" font-family="Arial, sans-serif" font-size="16" font-weight="bold"
+        text-anchor="middle" dominant-baseline="middle" fill="#FFFFFF">NEW GAME</text>
+</svg>

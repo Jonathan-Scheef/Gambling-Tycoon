@@ -1,0 +1,78 @@
+<svg width="360" height="252" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cardFlipGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#E0E0E0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardFlipGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2a5298;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1e3c72;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Frame 1: Card face down (full width) -->
+  <g id="frame1">
+    <rect x="5" y="5" width="80" height="112" rx="8" ry="8" 
+          fill="url(#cardFlipGradient2)" stroke="#000000" stroke-width="2"/>
+    <text x="45" y="65" font-family="Arial, sans-serif" font-size="12" 
+          text-anchor="middle" fill="#FFFFFF">1</text>
+  </g>
+
+  <!-- Frame 2: Card flipping (3/4 width) -->
+  <g id="frame2" transform="translate(90, 0)">
+    <rect x="5" y="5" width="60" height="112" rx="6" ry="8" 
+          fill="url(#cardFlipGradient2)" stroke="#000000" stroke-width="2"/>
+    <text x="35" y="65" font-family="Arial, sans-serif" font-size="12" 
+          text-anchor="middle" fill="#FFFFFF">2</text>
+  </g>
+
+  <!-- Frame 3: Card flipping (1/2 width) -->
+  <g id="frame3" transform="translate(160, 0)">
+    <rect x="5" y="5" width="40" height="112" rx="4" ry="8" 
+          fill="#CCCCCC" stroke="#000000" stroke-width="2"/>
+    <text x="25" y="65" font-family="Arial, sans-serif" font-size="12" 
+          text-anchor="middle" fill="#000000">3</text>
+  </g>
+
+  <!-- Frame 4: Card flipping (3/4 width, face up) -->
+  <g id="frame4" transform="translate(210, 0)">
+    <rect x="5" y="5" width="60" height="112" rx="6" ry="8" 
+          fill="url(#cardFlipGradient1)" stroke="#000000" stroke-width="2"/>
+    <text x="35" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="bold" 
+          text-anchor="middle" fill="#FF0000">A</text>
+    <text x="35" y="55" font-family="Arial, sans-serif" font-size="20" 
+          text-anchor="middle" fill="#FF0000">♥</text>
+    <text x="35" y="95" font-family="Arial, sans-serif" font-size="12" 
+          text-anchor="middle" fill="#000000">4</text>
+  </g>
+
+  <!-- Frame 5: Card face up (full width) -->
+  <g id="frame5" transform="translate(280, 0)">
+    <rect x="5" y="5" width="80" height="112" rx="8" ry="8" 
+          fill="url(#cardFlipGradient1)" stroke="#000000" stroke-width="2"/>
+    <text x="15" y="25" font-family="Arial, sans-serif" font-size="14" font-weight="bold" 
+          fill="#FF0000">A</text>
+    <text x="15" y="40" font-family="Arial, sans-serif" font-size="16" 
+          fill="#FF0000">♥</text>
+    <text x="45" y="65" font-family="Arial, sans-serif" font-size="24" 
+          text-anchor="middle" fill="#FF0000">♥</text>
+    <text x="45" y="95" font-family="Arial, sans-serif" font-size="12" 
+          text-anchor="middle" fill="#000000">5</text>
+  </g>
+
+  <!-- Animation guide text -->
+  <text x="180" y="140" font-family="Arial, sans-serif" font-size="12" 
+        text-anchor="middle" fill="#000000">Card Flip Animation Frames (1-5)</text>
+
+  <!-- Timing indicators -->
+  <text x="45" y="170" font-family="Arial, sans-serif" font-size="10" 
+        text-anchor="middle" fill="#666666">0ms</text>
+  <text x="125" y="170" font-family="Arial, sans-serif" font-size="10" 
+        text-anchor="middle" fill="#666666">100ms</text>
+  <text x="185" y="170" font-family="Arial, sans-serif" font-size="10" 
+        text-anchor="middle" fill="#666666">200ms</text>
+  <text x="245" y="170" font-family="Arial, sans-serif" font-size="10" 
+        text-anchor="middle" fill="#666666">300ms</text>
+  <text x="325" y="170" font-family="Arial, sans-serif" font-size="10" 
+        text-anchor="middle" fill="#666666">400ms</text>
+</svg>
