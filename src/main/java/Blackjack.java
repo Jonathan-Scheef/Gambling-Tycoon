@@ -296,14 +296,13 @@ public class Blackjack {
         hitButton.setEnabled(true);
         standButton.setEnabled(true);
         doubleButton.setEnabled(true);        // Prüfe auf Blackjack
-        if (getHandValue(playerHand) == 21) {
-            if (getHandValue(dealerHand) == 21) {
-                endGame("Push! Both have Blackjack!");
+        if (getHandValue(playerHand) == 21) {            if (getHandValue(dealerHand) == 21) {
                 GamblingTycoon.updateMoney(currentBet); // Einsatz zurück
+                endGame("Push! Both have Blackjack!");
             } else {
                 SoundPlayer.playSound("assets/Button Click.wav");
-                endGame("Blackjack! You win!");
                 GamblingTycoon.updateMoney((int)(currentBet * 2.5)); // 2.5x Auszahlung für Blackjack
+                endGame("Blackjack! You win!");
             }
         }
         
@@ -353,20 +352,20 @@ public class Blackjack {
                     
                     // Gewinner bestimmen
                     int playerScore = getHandValue(playerHand);
-                    int dealerScore = getHandValue(dealerHand);
-                      if (dealerScore > 21) {
+                    int dealerScore = getHandValue(dealerHand);                    if (dealerScore > 21) {
                         SoundPlayer.playSound("assets/Button Click.wav");
-                        endGame("Dealer busts! You win!");
                         GamblingTycoon.updateMoney(currentBet * 2);
+                        endGame("Dealer busts! You win!");
                     } else if (playerScore > dealerScore) {
                         SoundPlayer.playSound("assets/Button Click.wav");
+                        GamblingTycoon.updateMoney(currentBet * 2);
                         endGame("You win!");
-                        GamblingTycoon.updateMoney(currentBet * 2);                    } else if (dealerScore > playerScore) {
+                    } else if (dealerScore > playerScore) {
                         SoundPlayer.playError();
                         endGame("Dealer wins!");
                     } else {
-                        endGame("Push! It's a tie!");
                         GamblingTycoon.updateMoney(currentBet); // Einsatz zurück
+                        endGame("Push! It's a tie!");
                     }
                 }
             }

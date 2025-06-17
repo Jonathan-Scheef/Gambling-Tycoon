@@ -133,20 +133,12 @@ public class SlotMachine {
             if (currentBet > GamblingTycoon.getMoney()) {
                 resultLabel.setText("Not enough money!");
                 return;
-            }
+            }            // Einsatz abziehen
+            GamblingTycoon.updateMoney(-currentBet);
             
             // Hebel deaktivieren während Animation
             leverButton.setEnabled(false);
             resultLabel.setText("SPINNING...");
-            
-            // Einsatz abziehen
-            GamblingTycoon.updateMoney(-currentBet);
-            
-            // Prüfe Game Over nach dem Einsatz
-            if (GamblingTycoon.getMoney() <= 0) {
-                GamblingTycoon.showGameOverScreen();
-                return;
-            }
             
             // Hebel-Sound abspielen
             SoundPlayer.playLeverPull();
@@ -205,9 +197,14 @@ public class SlotMachine {
                         int y = cy + slotH/2 - 60;
                         reels[i].setLocation(x, y);
                     }
-                    
-                    // Hebel wieder aktivieren
+                      // Hebel wieder aktivieren
                     leverButton.setEnabled(true);
+                    
+                    // Game Over prüfen NACH dem Spin-Ergebnis
+                    if (GamblingTycoon.getMoney() <= 0) {
+                        // UI in konsistentem Zustand lassen
+                        GamblingTycoon.showGameOverScreen();
+                    }
                 }
             });
             
