@@ -164,15 +164,8 @@ public class GamblingTycoon {
 
     private static JPanel createSlotMachinePanel() {
         return SlotMachine.createSlotMachinePanel(GamblingTycoon::showMainMenuPanel);
-    }
-
-    private static JPanel createRideTheBusPanel() {
-        // Platzhalter-Panel mit Escape-Key, da RideTheBus noch nicht implementiert ist
-        JPanel panel = new JPanel(new java.awt.BorderLayout());
-        javax.swing.JLabel label = new javax.swing.JLabel("Ride The Bus (noch nicht implementiert)", javax.swing.SwingConstants.CENTER);
-        panel.add(label, java.awt.BorderLayout.CENTER);
-        addEscapeKeyAction(panel, GamblingTycoon::showMainMenuPanel);
-        return panel;
+    }    private static JPanel createRideTheBusPanel() {
+        return RideTheBus.createRideTheBusPanel(GamblingTycoon::showMainMenuPanel);
     }
 
     // Call this method to update the money counter from anywhere
