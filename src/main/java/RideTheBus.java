@@ -510,14 +510,16 @@ public class RideTheBus {
         
         stopTimer();
         
-        // Calculate correct multiplier based on completed rounds
+        // Calculate correct multiplier based on number of drawn cards (completed rounds)
+        int completedRounds = drawnCards.size();
         int completedMultiplier;
-        if (currentRound == 2) {
-            completedMultiplier = 2; // After completing Round 1
-        } else if (currentRound == 3) {
-            completedMultiplier = 3; // After completing Round 2
-        } else if (currentRound == 4) {
-            completedMultiplier = 4; // After completing Round 3
+        
+        if (completedRounds == 1) {
+            completedMultiplier = 2; // After completing Round 1 (color)
+        } else if (completedRounds == 2) {
+            completedMultiplier = 3; // After completing Round 2 (higher/lower)
+        } else if (completedRounds == 3) {
+            completedMultiplier = 4; // After completing Round 3 (inside/outside)
         } else {
             completedMultiplier = 1; // Fallback
         }
