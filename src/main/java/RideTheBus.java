@@ -337,18 +337,25 @@ public class RideTheBus {
         roundLabel.setText("ROUND 1: COLOR - Red or Black?");
         instructionLabel.setText("Predict the color of the next card!");
         multiplierLabel.setText("Multiplier: " + currentMultiplier + "x");
-        
-        buttonsPanel.removeAll();
+          buttonsPanel.removeAll();
         buttonsPanel.add(redButton);
         buttonsPanel.add(blackButton);
+        
+        // Buttons für neue Runde aktivieren
+        redButton.setEnabled(true);
+        blackButton.setEnabled(true);
+        
         buttonsPanel.revalidate();
         buttonsPanel.repaint();
         
         startTimer();
     }
-    
-    private static void makeColorChoice(boolean chooseRed) {
+      private static void makeColorChoice(boolean chooseRed) {
         if (!gameActive || currentRound != 1) return;
+        
+        // Buttons sofort deaktivieren um Doppel-Klicks zu verhindern
+        redButton.setEnabled(false);
+        blackButton.setEnabled(false);
         
         stopTimer();
         Card drawnCard = deck.remove(deck.size() - 1);
@@ -376,11 +383,15 @@ public class RideTheBus {
             Card lastCard = drawnCards.get(drawnCards.size() - 1);
             instructionLabel.setText("Is the next card higher or lower than " + lastCard.getDisplayName() + "?");
             multiplierLabel.setText("Multiplier: " + currentMultiplier + "x");
-            
-            buttonsPanel.removeAll();
+              buttonsPanel.removeAll();
             buttonsPanel.add(higherButton);
             buttonsPanel.add(lowerButton);
             buttonsPanel.add(cashOutButton);
+            
+            // Buttons für neue Runde aktivieren
+            higherButton.setEnabled(true);
+            lowerButton.setEnabled(true);
+            
             buttonsPanel.revalidate();
             buttonsPanel.repaint();
             
@@ -390,9 +401,12 @@ public class RideTheBus {
         delay.setRepeats(false);
         delay.start();
     }
-    
-    private static void makeHigherLowerChoice(boolean chooseHigher) {
+      private static void makeHigherLowerChoice(boolean chooseHigher) {
         if (!gameActive || currentRound != 2) return;
+        
+        // Buttons sofort deaktivieren um Doppel-Klicks zu verhindern
+        higherButton.setEnabled(false);
+        lowerButton.setEnabled(false);
         
         stopTimer();
         Card previousCard = drawnCards.get(drawnCards.size() - 1);
@@ -435,11 +449,15 @@ public class RideTheBus {
             instructionLabel.setText("Will the next card be INSIDE or OUTSIDE " + 
                                    card1.getDisplayName() + " and " + card2.getDisplayName() + "?");
             multiplierLabel.setText("Multiplier: " + currentMultiplier + "x");
-            
-            buttonsPanel.removeAll();
+              buttonsPanel.removeAll();
             buttonsPanel.add(insideButton);
             buttonsPanel.add(outsideButton);
             buttonsPanel.add(cashOutButton);
+            
+            // Buttons für neue Runde aktivieren
+            insideButton.setEnabled(true);
+            outsideButton.setEnabled(true);
+            
             buttonsPanel.revalidate();
             buttonsPanel.repaint();
             
@@ -449,9 +467,12 @@ public class RideTheBus {
         delay.setRepeats(false);
         delay.start();
     }
-    
-    private static void makeInsideOutsideChoice(boolean chooseInside) {
+      private static void makeInsideOutsideChoice(boolean chooseInside) {
         if (!gameActive || currentRound != 3) return;
+        
+        // Buttons sofort deaktivieren um Doppel-Klicks zu verhindern
+        insideButton.setEnabled(false);
+        outsideButton.setEnabled(false);
         
         stopTimer();
         Card card1 = drawnCards.get(0);
@@ -486,13 +507,19 @@ public class RideTheBus {
             roundLabel.setText("ROUND 4: SUIT - Final Round!");
             instructionLabel.setText("Predict the SUIT of the final card for 20x multiplier!");
             multiplierLabel.setText("Multiplier: " + currentMultiplier + "x");
-            
-            buttonsPanel.removeAll();
+              buttonsPanel.removeAll();
             buttonsPanel.add(heartsButton);
             buttonsPanel.add(diamondsButton);
             buttonsPanel.add(clubsButton);
             buttonsPanel.add(spadesButton);
             buttonsPanel.add(cashOutButton);
+            
+            // Buttons für neue Runde aktivieren
+            heartsButton.setEnabled(true);
+            diamondsButton.setEnabled(true);
+            clubsButton.setEnabled(true);
+            spadesButton.setEnabled(true);
+            
             buttonsPanel.revalidate();
             buttonsPanel.repaint();
             
@@ -502,9 +529,14 @@ public class RideTheBus {
         delay.setRepeats(false);
         delay.start();
     }
-    
-    private static void makeSuitChoice(Card.Suit chosenSuit) {
+      private static void makeSuitChoice(Card.Suit chosenSuit) {
         if (!gameActive || currentRound != 4) return;
+        
+        // Buttons sofort deaktivieren um Doppel-Klicks zu verhindern
+        heartsButton.setEnabled(false);
+        diamondsButton.setEnabled(false);
+        clubsButton.setEnabled(false);
+        spadesButton.setEnabled(false);
         
         stopTimer();
         Card drawnCard = deck.remove(deck.size() - 1);
