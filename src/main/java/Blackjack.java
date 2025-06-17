@@ -218,18 +218,20 @@ public class Blackjack {
         Collections.shuffle(deck);
     }
     
-    private static void startNewGame() {
-        try {
+    private static void startNewGame() {        try {
             currentBet = Integer.parseInt(betField.getText());
             if (currentBet <= 0) {
+                SoundPlayer.playError();
                 resultLabel.setText("Invalid bet amount!");
                 return;
             }
             if (currentBet > GamblingTycoon.getMoney()) {
+                SoundPlayer.playError();
                 resultLabel.setText("Not enough money!");
                 return;
             }
         } catch (NumberFormatException ex) {
+            SoundPlayer.playError();
             resultLabel.setText("Please enter a valid number!");
             return;
         }
@@ -260,9 +262,8 @@ public class Blackjack {
         // Card deal sounds
         SoundPlayer.playSound("assets/single card deal.wav");
         playerHand.add(deck.remove(deck.size() - 1));
-        
-        javax.swing.Timer dealTimer1 = new javax.swing.Timer(300, e -> {
-            SoundPlayer.playSound("assets/single card deal var.wav");
+          javax.swing.Timer dealTimer1 = new javax.swing.Timer(300, e -> {
+            SoundPlayer.playSound("assets/single card deal.wav");
             dealerHand.add(deck.remove(deck.size() - 1));
             ((javax.swing.Timer)e.getSource()).stop();
         });
@@ -276,9 +277,8 @@ public class Blackjack {
         });
         dealTimer2.setRepeats(false);
         dealTimer2.start();
-        
-        javax.swing.Timer dealTimer3 = new javax.swing.Timer(900, e -> {
-            SoundPlayer.playSound("assets/single card deal var.wav");
+          javax.swing.Timer dealTimer3 = new javax.swing.Timer(900, e -> {
+            SoundPlayer.playSound("assets/single card deal.wav");
             dealerHand.add(deck.remove(deck.size() - 1));
             updateDisplay();
             ((javax.swing.Timer)e.getSource()).stop();
@@ -295,14 +295,13 @@ public class Blackjack {
         dealButton.setEnabled(false);
         hitButton.setEnabled(true);
         standButton.setEnabled(true);
-        doubleButton.setEnabled(true);
-          // Prüfe auf Blackjack
+        doubleButton.setEnabled(true);        // Prüfe auf Blackjack
         if (getHandValue(playerHand) == 21) {
             if (getHandValue(dealerHand) == 21) {
                 endGame("Push! Both have Blackjack!");
                 GamblingTycoon.updateMoney(currentBet); // Einsatz zurück
             } else {
-                SoundPlayer.playSound("assets/Win.wav");
+                SoundPlayer.playSound("assets/Button Click.wav");
                 endGame("Blackjack! You win!");
                 GamblingTycoon.updateMoney((int)(currentBet * 2.5)); // 2.5x Auszahlung für Blackjack
             }
@@ -320,9 +319,8 @@ public class Blackjack {
         SoundPlayer.playSound("assets/single card deal.wav");
         playerHand.add(deck.remove(deck.size() - 1));
         updateDisplay();
-        
-        int playerScore = getHandValue(playerHand);
-        if (playerScore > 21) {
+          int playerScore = getHandValue(playerHand);        if (playerScore > 21) {
+            SoundPlayer.playError();
             endGame("Bust! You lose!");
         } else if (playerScore == 21) {
             playerStand(); // Automatisch stehen bei 21
@@ -342,13 +340,12 @@ public class Blackjack {
         javax.swing.Timer dealerTimer = new javax.swing.Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (getHandValue(dealerHand) < 17) {
-                    // Deck-Check vor Dealer-Hit
+                if (getHandValue(dealerHand) < 17) {                    // Deck-Check vor Dealer-Hit
                     if (deck.size() < 1) {
                         showShufflingMessage();
                         initializeDeck();
                     }
-                    SoundPlayer.playSound("assets/single card deal var.wav");
+                    SoundPlayer.playSound("assets/single card deal.wav");
                     dealerHand.add(deck.remove(deck.size() - 1));
                     updateDisplay();
                 } else {
@@ -357,16 +354,15 @@ public class Blackjack {
                     // Gewinner bestimmen
                     int playerScore = getHandValue(playerHand);
                     int dealerScore = getHandValue(dealerHand);
-                    
-                    if (dealerScore > 21) {
-                        SoundPlayer.playSound("assets/Win.wav");
+                      if (dealerScore > 21) {
+                        SoundPlayer.playSound("assets/Button Click.wav");
                         endGame("Dealer busts! You win!");
                         GamblingTycoon.updateMoney(currentBet * 2);
                     } else if (playerScore > dealerScore) {
-                        SoundPlayer.playSound("assets/Win.wav");
+                        SoundPlayer.playSound("assets/Button Click.wav");
                         endGame("You win!");
-                        GamblingTycoon.updateMoney(currentBet * 2);
-                    } else if (dealerScore > playerScore) {
+                        GamblingTycoon.updateMoney(currentBet * 2);                    } else if (dealerScore > playerScore) {
+                        SoundPlayer.playError();
                         endGame("Dealer wins!");
                     } else {
                         endGame("Push! It's a tie!");
@@ -377,12 +373,12 @@ public class Blackjack {
         });
         dealerTimer.start();
     }
-    
-    private static void playerDouble() {
+      private static void playerDouble() {
         if (!gameActive || dealerTurn || playerHand.size() > 2) return;
         
         // Prüfe ob genug Geld für Double Down
         if (currentBet > GamblingTycoon.getMoney()) {
+            SoundPlayer.playError();
             resultLabel.setText("Not enough money to double down!");
             return;
         }
@@ -397,12 +393,14 @@ public class Blackjack {
         updateDisplay();
         
         if (getHandValue(playerHand) > 21) {
+            SoundPlayer.playError();
             endGame("Bust! You lose!");
         } else {
             playerStand();
         }
     }
-      private static void endGame(String message) {
+    
+    private static void endGame(String message) {
         gameActive = false;
         dealerTurn = false; // Dealer-Turn explizit zurücksetzen
         resultLabel.setText(message);

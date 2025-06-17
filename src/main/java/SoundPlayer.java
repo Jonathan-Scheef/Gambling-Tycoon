@@ -5,8 +5,7 @@ import java.io.IOException;
 public class SoundPlayer {
     private static boolean soundEnabled = true;
     private static boolean mp3SupportWarningShown = false;
-    
-    public static void playSound(String soundFile) {
+      public static void playSound(String soundFile) {
         if (!soundEnabled) return;
         
         try {
@@ -23,6 +22,24 @@ public class SoundPlayer {
             File fileToPlay = wavAudioFile.exists() ? wavAudioFile : audioFile;
             
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(fileToPlay);
+            
+            // Check if the audio format is supported
+            AudioFormat format = audioInputStream.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, format);
+            
+            if (!AudioSystem.isLineSupported(info)) {
+                System.err.println("Audio format not supported for: " + soundFile);
+                System.err.println("Format: " + format);
+                audioInputStream.close();
+                
+                // Try fallback sound for card deals
+                if (soundFile.contains("single card deal var.wav")) {
+                    playSound("assets/single card deal.wav");
+                    return;
+                }
+                return;
+            }
+            
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
             
@@ -69,13 +86,16 @@ public class SoundPlayer {
     public static void playCardDeal() {
         playSound("assets/single card deal.wav");
     }
-    
-    public static void playCardDealVariant() {
-        playSound("assets/single card deal var.wav");
+      public static void playCardDealVariant() {
+        // Fallback to standard card deal sound since var.wav has format issues
+        playSound("assets/single card deal.wav");
+    }
+      public static void playFiveCardDeal() {
+        playSound("assets/five card deal.mp3"); // Will try WAV version first if available
     }
     
-    public static void playFiveCardDeal() {
-        playSound("assets/five card deal.mp3"); // Will try WAV version first if available
+    public static void playError() {
+        playSound("assets/error.aiff");
     }
     
     public static void setSoundEnabled(boolean enabled) {

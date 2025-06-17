@@ -295,18 +295,20 @@ public class RideTheBus {
         drawnCards = new ArrayList<>();
     }
     
-    private static void startNewGame() {
-        try {
+    private static void startNewGame() {        try {
             currentBet = Integer.parseInt(betField.getText());
             if (currentBet < 10 || currentBet > 500) {
+                SoundPlayer.playError();
                 instructionLabel.setText("Bet must be between $10 and $500!");
                 return;
             }
             if (currentBet > GamblingTycoon.getMoney()) {
+                SoundPlayer.playError();
                 instructionLabel.setText("Not enough money!");
                 return;
             }
         } catch (NumberFormatException ex) {
+            SoundPlayer.playError();
             instructionLabel.setText("Please enter a valid bet amount!");
             return;
         }
@@ -353,14 +355,13 @@ public class RideTheBus {
         drawnCards.add(drawnCard);
         
         boolean isRed = drawnCard.isRed();
-        boolean correct = (chooseRed && isRed) || (!chooseRed && !isRed);
-          updateCardDisplay();
+        boolean correct = (chooseRed && isRed) || (!chooseRed && !isRed);        updateCardDisplay();
         
         if (correct) {
-            SoundPlayer.playSound("assets/Win.wav");
+            SoundPlayer.playSound("assets/Button Click.wav");
             instructionLabel.setText("Correct! The card was " + (isRed ? "RED" : "BLACK") + "!");
-            proceedToRound2();
-        } else {
+            proceedToRound2();        } else {
+            SoundPlayer.playError();
             instructionLabel.setText("Wrong! The card was " + (isRed ? "RED" : "BLACK") + ". You lose!");
             endGame(false);
         }
@@ -407,12 +408,12 @@ public class RideTheBus {
         }
         
         updateCardDisplay();
-        
-        if (correct) {
+          if (correct) {
+            SoundPlayer.playSound("assets/Button Click.wav");
             instructionLabel.setText("Correct! " + drawnCard.getDisplayName() + " was " + 
                                    (isHigher ? "higher" : "lower") + " than " + previousCard.getDisplayName() + "!");
-            proceedToRound3();
-        } else {
+            proceedToRound3();        } else {
+            SoundPlayer.playError();
             if (drawnCard.getValue() == previousCard.getValue()) {
                 instructionLabel.setText("Same value! " + drawnCard.getDisplayName() + " = " + previousCard.getDisplayName() + ". You lose!");
             } else {
@@ -466,12 +467,12 @@ public class RideTheBus {
         boolean correct = (chooseInside && isInside) || (!chooseInside && !isInside);
         
         updateCardDisplay();
-        
-        if (correct) {
+          if (correct) {
+            SoundPlayer.playSound("assets/Button Click.wav");
             instructionLabel.setText("Correct! " + drawnCard.getDisplayName() + " was " + 
                                    (isInside ? "inside" : "outside") + " the range!");
-            proceedToRound4();
-        } else {
+            proceedToRound4();        } else {
+            SoundPlayer.playError();
             instructionLabel.setText("Wrong! " + drawnCard.getDisplayName() + " was " + 
                                    (isInside ? "inside" : "outside") + " the range!");
             endGame(false);
@@ -512,11 +513,11 @@ public class RideTheBus {
         boolean correct = drawnCard.suit == chosenSuit;
         
         updateCardDisplay();
-        
-        if (correct) {
+          if (correct) {
+            SoundPlayer.playSound("assets/Button Click.wav");
             instructionLabel.setText("JACKPOT! " + drawnCard.getDisplayName() + " - You won 20x your bet!");
-            endGame(true);
-        } else {
+            endGame(true);        } else {
+            SoundPlayer.playError();
             instructionLabel.setText("Wrong suit! " + drawnCard.getDisplayName() + " - You lose everything!");
             endGame(false);
         }
