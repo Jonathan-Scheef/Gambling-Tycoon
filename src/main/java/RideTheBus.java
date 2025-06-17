@@ -505,8 +505,7 @@ public class RideTheBus {
             instructionLabel.setText("Wrong suit! " + drawnCard.getDisplayName() + " - You lose everything!");
             endGame(false);
         }
-    }
-      private static void cashOut() {
+    }    private static void cashOut() {
         if (!gameActive || currentRound < 2) return;
         
         stopTimer();
@@ -527,7 +526,25 @@ public class RideTheBus {
         GamblingTycoon.updateMoney(winnings);
         
         instructionLabel.setText("Cashed out! You won $" + winnings + " (Bet: $" + currentBet + " x " + completedMultiplier + ")!");
-        endGame(true);
+        endGameCashOut(); // Use separate method to avoid double money transfer
+    }
+    
+    private static void endGameCashOut() {
+        gameActive = false;
+        stopTimer();
+        
+        roundLabel.setText("Well played! You cashed out safely!");
+        
+        // Reset buttons
+        buttonsPanel.removeAll();
+        buttonsPanel.add(startButton);
+        buttonsPanel.revalidate();
+        buttonsPanel.repaint();
+        
+        // Game Over check
+        if (GamblingTycoon.getMoney() <= 0) {
+            GamblingTycoon.showGameOverScreen();
+        }
     }
     
     private static void startTimer() {
@@ -560,20 +577,20 @@ public class RideTheBus {
         }
         timerLabel.setText("");
     }
-    
-    private static void endGame(boolean won) {
+      private static void endGame(boolean won) {
         gameActive = false;
         stopTimer();
         
         if (won && currentRound == 4) {
             // Maximum payout for completing all 4 rounds
-            int winnings = currentBet * currentMultiplier;
+            int winnings = currentBet * 20; // 20x multiplier for completing all rounds
             GamblingTycoon.updateMoney(winnings);
             roundLabel.setText("🎉 CHAMPION! You completed all 4 rounds! 🎉");
         } else if (!won) {
             roundLabel.setText("Game Over - Better luck next time!");
         } else {
-            roundLabel.setText("Well played! You cashed out safely!");
+            // This should not happen anymore since cashOut uses its own method
+            roundLabel.setText("Game ended!");
         }
         
         // Reset buttons
