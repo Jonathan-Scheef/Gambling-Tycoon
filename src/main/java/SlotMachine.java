@@ -111,9 +111,11 @@ public class SlotMachine {
         leverButton.setBorderPainted(false);
         leverButton.setFocusPainted(false);
         leverButton.setText(""); // Kein Text
-        leverButton.setBounds(slotW + 10, slotH/4 + 10, leverW - 20, leverH - 20);
-        centerPanel.add(leverButton);        // Action: Symbole zufällig setzen
+        leverButton.setBounds(slotW + 10, slotH/4 + 10, leverW - 20, leverH - 20);        centerPanel.add(leverButton);        // Action: Symbole zufällig setzen
         leverButton.addActionListener(e -> {
+            // Verhindere mehrfaches Klicken während Animation
+            if (!leverButton.isEnabled()) return;
+            
             // Einsatz prüfen
             try {
                 currentBet = Integer.parseInt(betField.getText());
@@ -128,7 +130,13 @@ public class SlotMachine {
             if (currentBet > GamblingTycoon.getMoney()) {
                 resultLabel.setText("Not enough money!");
                 return;
-            }            // Einsatz abziehen
+            }
+            
+            // Hebel deaktivieren während Animation
+            leverButton.setEnabled(false);
+            resultLabel.setText("SPINNING...");
+            
+            // Einsatz abziehen
             GamblingTycoon.updateMoney(-currentBet);
             
             // Prüfe Game Over nach dem Einsatz
@@ -137,35 +145,71 @@ public class SlotMachine {
                 return;
             }
             
-            // Walzen drehen
+            // Hebel-Sound abspielen
+            SoundPlayer.playLeverPull();
+            
+            // Endgültige Ergebnisse berechnen
             Random rand = new Random();
-            int[] reelResults = new int[3];
+            int[] finalResults = new int[3];
             for (int i = 0; i < 3; i++) {
-                int idx = rand.nextInt(symbolIcons.length);
-                reelResults[i] = idx;
-                java.awt.Image scaledImage = symbolIcons[idx].getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH);
-                reels[i].setIcon(new ImageIcon(scaledImage));
+                finalResults[i] = rand.nextInt(symbolIcons.length);
             }
-            // Gewinn berechnen
-            int winnings = calculateWinnings(reelResults);
-            if (winnings > 0) {
-                GamblingTycoon.updateMoney(winnings);
-                if (reelResults[0] == reelResults[1] && reelResults[1] == reelResults[2]) {
-                    resultLabel.setText("JACKPOT! You win $" + winnings + "!");
-                } else {
-                    resultLabel.setText("You win $" + winnings + "!");
+            
+            // Spinning-Animation starten
+            javax.swing.Timer spinTimer = new javax.swing.Timer(100, null);
+            final int[] spinCount = {0};
+            final int totalSpins = 50; // 5 Sekunden bei 100ms Intervall
+            
+            spinTimer.addActionListener(spinEvent -> {
+                // Zufällige Symbole während Animation
+                for (int i = 0; i < 3; i++) {
+                    int randomIdx = rand.nextInt(symbolIcons.length);
+                    java.awt.Image scaledImage = symbolIcons[randomIdx].getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH);
+                    reels[i].setIcon(new ImageIcon(scaledImage));
                 }
-            } else {
-                resultLabel.setText("Try again!");
-            }
-            // Symbole zentrieren
-            int cx = (centerPanel.getWidth() - slotW) / 2;
-            int cy = (centerPanel.getHeight() - slotH) / 2;
-            for (int i = 0; i < 3; i++) {
-                int x = cx + slotW/4 + i*(slotW/4) - 20;
-                int y = cy + slotH/2 - 60;
-                reels[i].setLocation(x, y);
-            }
+                
+                spinCount[0]++;
+                
+                // Animation beenden und finale Ergebnisse anzeigen
+                if (spinCount[0] >= totalSpins) {
+                    spinTimer.stop();
+                    
+                    // Finale Symbole setzen
+                    for (int i = 0; i < 3; i++) {
+                        java.awt.Image scaledImage = symbolIcons[finalResults[i]].getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH);
+                        reels[i].setIcon(new ImageIcon(scaledImage));
+                    }
+                    
+                    // Gewinn berechnen
+                    int winnings = calculateWinnings(finalResults);
+                    if (winnings > 0) {
+                        GamblingTycoon.updateMoney(winnings);
+                        // Gewinn-Sound abspielen
+                        SoundPlayer.playWin();
+                        if (finalResults[0] == finalResults[1] && finalResults[1] == finalResults[2]) {
+                            resultLabel.setText("JACKPOT! You win $" + winnings + "!");
+                        } else {
+                            resultLabel.setText("You win $" + winnings + "!");
+                        }
+                    } else {
+                        resultLabel.setText("Try again!");
+                    }
+                    
+                    // Symbole zentrieren
+                    int cx = (centerPanel.getWidth() - slotW) / 2;
+                    int cy = (centerPanel.getHeight() - slotH) / 2;
+                    for (int i = 0; i < 3; i++) {
+                        int x = cx + slotW/4 + i*(slotW/4) - 20;
+                        int y = cy + slotH/2 - 60;
+                        reels[i].setLocation(x, y);
+                    }
+                    
+                    // Hebel wieder aktivieren
+                    leverButton.setEnabled(true);
+                }
+            });
+            
+            spinTimer.start();
         });
         // Initiale Positionierung der Symbole
         centerPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
