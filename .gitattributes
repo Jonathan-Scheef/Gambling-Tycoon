@@ -2,3 +2,4 @@
 *.css -linguist-detectable
 *.js -linguist-detectable
 *.bat -linguist-detectable
+*.sh -linguist-detectable
