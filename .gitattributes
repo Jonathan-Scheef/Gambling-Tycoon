@@ -1,4 +1,4 @@
 *.html -linguist-detectable
 *.css -linguist-detectable
 *.js -linguist-detectable
-*.batchfile -linguist-detectable
+*.bat -linguist-detectable
